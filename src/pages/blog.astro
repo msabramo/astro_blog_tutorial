@@ -1,12 +1,38 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogPost from '../components/BlogPost.astro';
+
+interface Frontmatter {
+  title: string;
+  pubDate: string;
+  description: string;
+  author: string;
+  image?: {
+    url: string;
+    alt: string;
+  };
+  tags?: string[];
+}
+
+interface MarkdownPost {
+  url: string;
+  frontmatter: Frontmatter;
+}
+
+const allPosts = Object.values(import.meta.glob('./posts/*.md', { eager: true })) as MarkdownPost[];
+console.log('allPosts', JSON.stringify(allPosts, null, 2));
 ---
 
 <BaseLayout pageTitle="Blog">
     <p>This is where I will post about my journey learning Astro.</p>
     <ul>
-      <li><a href="/posts/post-1/">Post 1</a></li>
-      <li><a href="/posts/post-2/">Post 2</a></li>
-      <li><a href="/posts/post-3/">Post 3</a></li>
+      {
+        allPosts.map((post: MarkdownPost) => 
+          <BlogPost 
+            url={post.url} 
+            title={post.frontmatter.title} 
+          />
+        )
+      }
     </ul>
 </BaseLayout>
