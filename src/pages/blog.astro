@@ -1,4 +1,5 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BlogPost from '../components/BlogPost.astro';
 
@@ -19,7 +20,7 @@ interface MarkdownPost {
   frontmatter: Frontmatter;
 }
 
-const allPosts = Object.values(import.meta.glob('./posts/*.md', { eager: true })) as MarkdownPost[];
+const allPosts = await getCollection('blog');
 console.log('allPosts', JSON.stringify(allPosts, null, 2));
 ---
 
@@ -27,10 +28,10 @@ console.log('allPosts', JSON.stringify(allPosts, null, 2));
     <p>This is where I will post about my journey learning Astro.</p>
     <ul>
       {
-        allPosts.map((post: MarkdownPost) => 
+        allPosts.map((post) => 
           <BlogPost 
-            url={post.url} 
-            title={post.frontmatter.title} 
+            url={`/posts/${post.id}`} 
+            title={post.data.title} 
           />
         )
       }
